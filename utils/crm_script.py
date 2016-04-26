@@ -157,6 +157,20 @@ def rpmcheck(names):
         raise IOError(err)
     return json.loads(out)
 
+def package_manager():
+    ''' Adapted from crm_pkg.py '''
+    for prog in ["rpm", "apt-get"]:
+        for p in os.getenv("PATH").split(os.pathsep):
+            filename = os.path.join(p, prog)
+            if os.path.isfile(filename) and os.access(filename, os.X_OK):
+                return filename
+    return None
+
+def debcheck(names):
+    rc, out, err = call(['./crm_debcheck.py'] + names)
+    if rc != 0:
+        raise IOError(err)
+    return json.loads(out)
 
 def save_template(template, dest, **kwargs):
     '''

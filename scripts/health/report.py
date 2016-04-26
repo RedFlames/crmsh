@@ -17,7 +17,7 @@ def error(fmt, *args):
     errors.append(fmt % args)
 
 # sort {package: {version: [host]}}
-rpm_versions = {}
+pkg_versions = {}
 
 LOW_UPTIME = 60.0
 HIGH_LOAD = 1.0
@@ -33,25 +33,25 @@ for node, info in health_report.iteritems():
     if float(info['system']['loadavg']) > HIGH_LOAD:
         warn("%s: 15 minute load average is %s" % (node, info['system']['loadavg']))
 
-    for rpm in info['rpm']:
-        if 'error' in rpm:
-            if rpm['name'] not in rpm_versions:
-                rpm_versions[rpm['name']] = {rpm['error']: [node]}
+    for pkg in info['pkg']:
+        if 'error' in pkg:
+            if pkg['name'] not in pkg_versions:
+                pkg_versions[pkg['name']] = {pkg['error']: [node]}
             else:
-                versions = rpm_versions[rpm['name']]
-                if rpm['error'] in versions:
-                    versions[rpm['error']].append(node)
+                versions = pkg_versions[pkg['name']]
+                if pkg['error'] in versions:
+                    versions[pkg['error']].append(node)
                 else:
-                    versions[rpm['error']] = [node]
+                    versions[pkg['error']] = [node]
         else:
-            if rpm['name'] not in rpm_versions:
-                rpm_versions[rpm['name']] = {rpm['version']: [node]}
+            if pkg['name'] not in pkg_versions:
+                pkg_versions[pkg['name']] = {pkg['version']: [node]}
             else:
-                versions = rpm_versions[rpm['name']]
-                if rpm['version'] in versions:
-                    versions[rpm['version']].append(node)
+                versions = pkg_versions[pkg['name']]
+                if pkg['version'] in versions:
+                    versions[pkg['version']].append(node)
                 else:
-                    versions[rpm['version']] = [node]
+                    versions[pkg['version']] = [node]
     for disk, use in info['disk']:
         use = int(use[:-1])
         if use > 90:
@@ -62,10 +62,10 @@ for node, info in health_report.iteritems():
             warn("%s: No log rotation configured for %s" % (node, logfile))
 
 for cp in CORE_PACKAGES:
-    if cp not in rpm_versions:
+    if cp not in pkg_versions:
         error("Core package '%s' not installed on any node", cp)
 
-for name, versions in rpm_versions.iteritems():
+for name, versions in pkg_versions.iteritems():
     if len(versions) > 1:
         desc = ', '.join('%s (%s)' % (v, ', '.join(nodes)) for v, nodes in versions.items())
         warn("Package %s: Versions differ! %s", name, desc)

@@ -10,8 +10,20 @@ PACKAGES = ['booth', 'cluster-glue', 'corosync', 'crmsh', 'csync2', 'drbd',
             'haproxy', 'hawk', 'libdlm', 'libqb', 'ocfs2', 'ocfs2-tools',
             'pacemaker', 'pacemaker-mgmt', 'resource-agents', 'sbd']
 
-def rpm_info():
-    return crm_script.rpmcheck(PACKAGES)
+DEB_PACKAGES = ['booth', 'cluster-glue', 'corosync', 'crmsh', 'csync2',
+                'drbd-utils', 'fence-agents', 'gfs2-cluster', 'gfs2-utils',
+                'haproxy', 'libdlm3', 'libqb0', 'ocfs2-tools', 'pacemaker',
+                'resource-agents', 'sbd']
+
+def pkg_info():
+    packager = crm_script.package_manager()
+    if packager != None:
+        packager = os.path.basename(packager)
+        if os.path.basename(packager) = 'rpm':
+            return crm_script.rpmcheck(PACKAGES)
+        if os.path.basename(packager) = 'apt-get':
+            return crm_script.debcheck(DEB_PACKAGES)
+    return []
 
 def logrotate_info():
     rc, _, _ = crm_script.call(
@@ -88,7 +100,7 @@ def files_info():
 
 try:
     data = {
-        'rpm': rpm_info(),
+        'pkg': pkg_info(),
         'logrotate': logrotate_info(),
         'system': sys_info(),
         'disk': disk_info(),
