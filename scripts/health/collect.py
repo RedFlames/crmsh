@@ -18,10 +18,9 @@ DEB_PACKAGES = ['booth', 'cluster-glue', 'corosync', 'crmsh', 'csync2',
 def pkg_info():
     packager = crm_script.package_manager()
     if packager != None:
-        packager = os.path.basename(packager)
-        if os.path.basename(packager) = 'rpm':
+        if os.path.basename(packager) == 'rpm':
             return crm_script.rpmcheck(PACKAGES)
-        if os.path.basename(packager) = 'apt-get':
+        if os.path.basename(packager) == 'dpkg':
             return crm_script.debcheck(DEB_PACKAGES)
     return []
 

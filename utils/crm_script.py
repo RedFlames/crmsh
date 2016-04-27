@@ -159,7 +159,7 @@ def rpmcheck(names):
 
 def package_manager():
     ''' Adapted from crm_pkg.py '''
-    for prog in ["rpm", "apt-get"]:
+    for prog in ["rpm", "dpkg"]:
         for p in os.getenv("PATH").split(os.pathsep):
             filename = os.path.join(p, prog)
             if os.path.isfile(filename) and os.access(filename, os.X_OK):

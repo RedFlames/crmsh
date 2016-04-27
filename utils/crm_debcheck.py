@@ -22,7 +22,7 @@ def package_data(pkg):
     """
     Gathers version information about a package.
     """
-    _qfmt = 'version: \${VERSION}\n'
+    _qfmt = 'version: ${VERSION}\n'
     rc, out, err = run(['/usr/bin/dpkg-query', '-W', '--showformat=' + _qfmt, pkg])
     if rc == 0:
         data = {'name': pkg}
